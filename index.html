@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DMND KUTZ Order Desk</title>
+<meta name="description" content="Order shop supplies and T-shirts, send a reimbursement, or report something that needs fixing. No login.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="DMND KUTZ Order Desk">
+<meta property="og:description" content="Order shop supplies and T-shirts, send a reimbursement, or report something that needs fixing. No login.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M20 2 38 20 20 38 2 20Z%22 fill=%22%23ED1C24%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700&display=swap">
+<style>
+:root {
+  --bg: #0B0B0C; --surface: #151517; --ink: #F3F3F4; --muted: #A3A5AA; --line: #2E2F33;
+  --red: #ED1C24; --silver: #BDBEC0; --ok: #4CC97A; --err: #FF6B70;
+  --display: "Archivo Black", "Arial Black", Impact, sans-serif;
+  --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --label: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.45; }
+.wrap { max-width: 560px; margin: 0 auto; padding: 28px 18px 56px; display: grid; gap: 26px; }
+.top { display: flex; gap: 14px; align-items: center; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.top .logo { width: 72px; height: auto; flex: none; }
+.brand { font-family: var(--display); font-size: 24px; line-height: 1; letter-spacing: .02em; } .brand span { color: var(--red); }
+h1 { font-family: var(--display); font-size: 30px; line-height: 1.1; margin: 0; text-wrap: balance; }
+.lead { color: var(--muted); margin: 8px 0 0; }
+form, .review { display: grid; gap: 30px; }
+fieldset { border: 0; margin: 0; padding: 22px 0 0; border-top: 1px solid var(--line); display: grid; gap: 16px; min-width: 0; }
+legend { font-family: var(--display); font-size: 19px; padding: 0; float: left; width: 100%; }
+legend + * { clear: both; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 420px) { .row { grid-template-columns: 1fr; } }
+.field { display: grid; gap: 6px; min-width: 0; }
+.lbl { font-family: var(--label); font-size: 15px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--silver); }
+.opt { font-family: var(--body); font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--muted); }
+input[type=text], input[type=date], select, textarea {
+  width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; min-height: 50px;
+}
+select:disabled { opacity: .5; }
+textarea { min-height: 84px; resize: vertical; }
+input:focus, select:focus, textarea:focus, button:focus-visible, .pick:focus-within, .seg label:focus-within, .photo:focus-within { outline: 2px solid var(--red); outline-offset: 1px; }
+.hint { font-size: 14px; color: var(--muted); margin: 0; }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px; gap: 4px; }
+.seg.two { grid-auto-flow: row; grid-template-columns: 1fr 1fr; }
+.seg input, .pick input, .photo input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label { position: relative; text-align: center; padding: 11px 6px; border-radius: 6px; color: var(--muted); cursor: pointer; font-size: 16px; line-height: 1.2; display: grid; place-items: center; min-height: 48px; }
+.seg label:has(input:checked) { background: var(--red); color: #fff; font-weight: 700; }
+.picks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 420px) { .picks { grid-template-columns: 1fr; } }
+.pick { position: relative; display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: center; min-height: 50px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; font-weight: 500; font-size: 16px; line-height: 1.25; user-select: none; }
+.pick .box { width: 22px; height: 22px; border: 2px solid var(--muted); border-radius: 5px; display: grid; place-items: center; }
+.pick .box svg { opacity: 0; }
+.pick:has(input:checked) { border-color: var(--red); }
+.pick:has(input:checked) .box { background: var(--red); border-color: var(--red); }
+.pick:has(input:checked) .box svg { opacity: 1; }
+.alert { border: 1px solid var(--red); background: rgba(237, 28, 36, .12); border-radius: 8px; padding: 12px 14px; display: grid; gap: 2px; }
+.alert b { font-family: var(--label); font-size: 16px; letter-spacing: .07em; text-transform: uppercase; color: #fff; }
+.alert span { color: var(--ink); font-size: 15px; }
+.sizes { display: grid; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.size { display: grid; grid-template-columns: 58px 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; }
+.size + .size { border-top: 1px solid var(--line); }
+.size .s { font-family: var(--display); font-size: 18px; }
+.size .left { font-size: 14px; color: var(--muted); }
+.size.out .left { color: var(--err); font-weight: 700; font-family: var(--label); letter-spacing: .07em; text-transform: uppercase; font-size: 15px; }
+.size.out .s { color: var(--muted); }
+.step { display: flex; align-items: center; gap: 4px; }
+.step button { font: inherit; font-size: 22px; font-weight: 600; width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; line-height: 1; }
+.step button:disabled { opacity: .3; cursor: default; }
+.step output { width: 30px; text-align: center; font-family: var(--display); font-size: 18px; font-variant-numeric: tabular-nums; }
+.total { display: flex; justify-content: space-between; font-weight: 600; }
+.money { position: relative; }
+.money span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 600; pointer-events: none; }
+.money input { padding-left: 28px; font-variant-numeric: tabular-nums; }
+.photo { position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; border: 1px dashed var(--muted); border-radius: 8px; color: var(--ink); cursor: pointer; font-weight: 600; }
+.thumb { display: flex; gap: 12px; align-items: center; }
+.thumb img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+.link { font: inherit; font-size: 15px; color: var(--silver); background: none; border: 0; padding: 6px 0; text-decoration: underline; cursor: pointer; }
+button.go { font: inherit; font-weight: 700; font-size: 18px; color: #fff; background: var(--red); border: 0; border-radius: 8px; padding: 15px; min-height: 54px; cursor: pointer; width: 100%; }
+button.ghost { font: inherit; font-weight: 600; font-size: 17px; color: var(--ink); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 14px; min-height: 52px; cursor: pointer; width: 100%; }
+button[disabled].go { opacity: .55; cursor: default; }
+.end { display: grid; gap: 12px; }
+.msg { color: var(--err); min-height: 1.2em; font-weight: 600; }
+.sum { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.sum > div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 12px 14px; }
+.sum > div + div { border-top: 1px solid var(--line); }
+.sum dt { font-family: var(--label); font-size: 15px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--silver); padding-top: 2px; }
+.sum dd { margin: 0; overflow-wrap: anywhere; white-space: pre-line; }
+.sum ul { margin: 0; padding-left: 18px; }
+.done { display: grid; gap: 14px; text-align: center; padding: 30px 0; }
+.done .check { width: 64px; height: 64px; margin: 0 auto; border-radius: 50%; background: var(--ok); display: grid; place-items: center; }
+.foot { font-size: 13px; color: var(--muted); margin: 0; }
+.load { color: var(--muted); }
+body { border-top: 4px solid var(--red); } button.go { font-family: var(--display); font-weight: 400; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; box-shadow: 0 6px 22px rgba(237,28,36,.35); } .done .check { background: var(--red); } [hidden] { display: none !important; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <svg class="logo" role="img" aria-label="DMND KUTZ" xmlns="http://www.w3.org/2000/svg" viewBox="0 30 1584 1345"><defs><style>.dk-1{fill:#BDBEC0;}.dk-2{fill:#ED1C24;}.dk-3{fill:#fff;}.dk-4{fill:#000000;}</style></defs><circle class="dk-1" cx="792.68" cy="647.82" r="583.62"/><path class="dk-4" d="M1354.73,410.37c-30.72-72.64-74.7-137.87-130.72-193.89-56.01-56.01-121.25-99.99-193.89-130.72-75.22-31.82-155.11-47.95-237.45-47.95s-162.23,16.13-237.45,47.95c-72.64,30.72-137.87,74.7-193.89,130.72-56.01,56.01-99.99,121.25-130.72,193.89-31.82,75.22-47.95,155.11-47.95,237.45s16.13,162.23,47.95,237.45c30.72,72.64,74.7,137.87,130.72,193.89s121.25,99.99,193.89,130.72c75.22,31.82,155.11,47.95,237.45,47.95s162.23-16.13,237.45-47.95c72.64-30.72,137.87-74.7,193.89-130.72,56.01-56.01,99.99-121.25,130.72-193.89,31.82-75.22,47.95-155.11,47.95-237.45s-16.13-162.23-47.95-237.45ZM1376.3,647.82c0,322.32-261.29,583.62-583.62,583.62S209.07,970.14,209.07,647.82,470.36,64.2,792.68,64.2s583.62,261.29,583.62,583.62Z"/><path class="dk-4" d="M1360.33,194.35h-200.47c-.65-.03-1.28-.03-1.91-.03-4.79,0-12.08.4-20.22,3.8-17.63,7.41-31.26,18.41-40.02,32.17l-17.13-35.94h-447.61l-14.38,40.78-14.23-40.85-96.82.24-18.83,39.82c-8.57-15.67-23.09-28.09-42.44-36.22-8.12-3.4-15.42-3.8-20.19-3.8-.63,0-1.28,0-1.83.01h-.86s-199.7.01-199.7.01L0,579.96l118.81,112.16,348.18,350.08,41.97-41.97v80.93l284.15,287.14,290.09-286.36v-87.34h89.74l296.7-303.43.09-.09,114.27-111.12-223.67-385.61ZM1083.2,826.5v-.03h.03l-.03.03Z"/><polygon class="dk-3" points="1020.76 556.21 967.73 443.71 1066.69 556.21 1225.7 556.21 1064.54 218.09 940.73 218.09 991.94 330.58 893.73 218.09 735.09 218.09 895.65 556.21 1020.76 556.21"/><polygon class="dk-3" points="506.16 556.21 541.83 483.09 582.79 556.21 654.22 556.21 693.37 484.24 726.02 556.21 872.79 556.21 713.76 218.09 648.72 218.09 617.39 306.9 586.45 218.06 521.53 218.23 361.69 556.21 506.16 556.21"/><path class="dk-3" d="M197.15,556.19c31.78,0,63.19,0,86.56.01,5.46,0,10.88-.71,16.1-2.12,52.94-14.27,73.21-60.45,91.1-101.2,3.89-8.85,7.9-18.01,12.12-26.59,7.17-14.59,14.98-29.69,22.52-44.3,13.73-26.58,27.93-54.06,39.9-81.31,8.23-18.71,9.5-35.46,3.79-49.78-5.38-13.49-16.56-23.88-33.23-30.88-4.13-1.73-8.05-1.95-11.01-1.95-.52,0-1.04,0-1.57.01h-.98s-186.17.01-186.17.01l-3.81,6.57c-8.85,15.25-17.62,30.78-26.11,45.79-8.45,14.96-17.19,30.43-25.97,45.56-24.41,42.04-127.47,218.58-128.51,220.36l-11.58,19.85h22.98s67.74-.02,133.87-.02ZM280.36,355.71c14.24-26.36,26.69-49.39,33.83-63.23,4.73.58,12.72,4.57,17.6,8.21.49.86,5.03,10.65-12.17,51.91-11.08,26.57-26.1,53.96-33.32,67.11-2.39,4.35-4.65,8.97-6.83,13.43-8.07,16.49-15.7,32.07-29.71,37.24-6.9,2.55-14.71,3.73-24.57,3.73-2.54,0-5.12-.08-7.73-.21,18.42-35.91,42.92-81.24,62.89-118.19Z"/><path class="dk-3" d="M1156.34,381.98c7.55,14.61,15.35,29.71,22.52,44.3,4.22,8.59,8.24,17.74,12.12,26.59,17.89,40.75,38.16,86.93,91.1,101.2,5.23,1.41,10.65,2.12,16.12,2.12,23.34-.01,54.76-.01,86.54-.01,66.14,0,133.87.02,133.87.02h22.98s-11.58-19.84-11.58-19.84c-1.04-1.78-104.1-178.33-128.51-220.36-8.78-15.12-17.52-30.6-25.97-45.56-8.48-15.02-17.25-30.54-26.11-45.79l-3.81-6.57h-186.11s-1.04-.01-1.04-.01c-.53,0-1.05-.01-1.57-.01-2.96,0-6.89.22-11.02,1.96-16.66,7-27.84,17.39-33.22,30.88-5.71,14.32-4.43,31.06,3.79,49.77,11.97,27.25,26.17,54.74,39.9,81.32ZM1250.11,300.69c4.89-3.64,12.87-7.63,17.6-8.21,7.13,13.84,19.58,36.88,33.83,63.23,19.97,36.95,44.47,82.28,62.89,118.19-2.6.13-5.19.21-7.73.21-9.86,0-17.67-1.18-24.57-3.73-14.01-5.17-21.63-20.75-29.71-37.24-2.19-4.47-4.44-9.08-6.83-13.43-7.22-13.16-22.24-40.54-33.32-67.12-17.2-41.25-12.65-51.05-12.17-51.91Z"/><polygon class="dk-3" points="32.49 574.67 134.53 675.31 371.15 913.91 448.8 836.26 298.74 679.17 949.79 679.17 949.79 1176.45 1058.41 1071.84 1058.41 679.17 1446.95 679.17 1552.88 574.67 32.49 574.67"/><polygon class="dk-3" points="529.41 754.01 468.09 692.7 337.48 692.7 471.41 836.15 382.44 925.12 465.94 1008.63 531.65 942.92 531.65 1071.33 638.63 1178.3 638.63 693.37 529.41 693.37 529.41 754.01"/><path class="dk-3" d="M825.46,1067.11c0,18.42-14.99,33.41-33.41,33.41s-33.41-14.99-33.41-33.41v-374.08h-109.71v498.58l143.12,143.12,143.12-143.12v-498.58h-109.71v374.08Z"/><polygon class="dk-3" points="1073.35 802.74 1139.49 802.74 1073.35 868.88 1073.35 970.86 1161.69 970.86 1265.97 861.15 1211.33 861.15 1332.13 800.3 1434.07 693.03 1073.35 693.03 1073.35 802.74"/><polygon class="dk-2" points="999.96 543.02 916.03 364.95 1072.65 543.02 1204.81 543.02 1056.22 231.28 961.23 231.28 1041.3 407.18 887.74 231.28 755.95 231.28 903.99 543.02 999.96 543.02"/><polygon class="dk-2" points="497.92 543.02 541.02 454.66 590.52 543.02 646.38 543.02 694.44 454.67 734.52 543.02 852.01 543.02 705.39 231.28 658.05 231.28 617.31 346.77 577.08 231.28 529.89 231.4 382.52 543.02 497.92 543.02"/><path class="dk-2" d="M283.7,543.01c4.28,0,8.55-.56,12.69-1.67,57.33-15.45,71.09-72.61,94.81-120.88,20.14-40.95,43.77-83.17,62.19-125.1,12.81-29.13,5.83-51.31-22.46-63.19-2.7-1.13-5.55-.91-8.46-.9h-178.58c-17.63,30.37-34.45,60.98-52.08,91.35-24.7,42.53-128.53,220.39-128.53,220.39,0,0,148.48-.03,220.42,0ZM201.54,476.11c32.15-63.39,86.45-161.12,102.56-192.86,7.16-9.98,27.77.99,35.76,7,22.98,17.29-26.48,107.56-41.98,135.81-11.21,20.43-19.84,47.96-43.54,56.7-17.7,6.53-36.85,4.58-55.21,2.95-2.48-.31.92-6.66,2.41-9.6Z"/><path class="dk-2" d="M1190.7,420.46c23.73,48.27,37.48,105.42,94.81,120.88,4.13,1.11,8.4,1.67,12.69,1.67,71.94-.03,220.42,0,220.42,0,0,0-103.82-177.85-128.53-220.39-17.63-30.37-34.45-60.98-52.08-91.35h-178.58c-2.91-.01-5.76-.23-8.46.9-28.29,11.88-35.27,34.05-22.46,63.19,18.41,41.93,42.05,84.15,62.19,125.1ZM1242.05,290.25c7.99-6.01,28.59-16.99,35.76-7,16.11,31.75,70.41,129.48,102.56,192.86,1.49,2.94,4.9,9.29,2.41,9.6-18.36,1.62-37.51,3.57-55.21-2.95-23.7-8.74-32.33-36.27-43.54-56.7-15.5-28.25-64.96-118.51-41.98-135.81Z"/><polygon class="dk-2" points="64.65 587.86 143.85 665.98 371.19 895.22 436.62 829.79 272.81 665.98 962.98 665.98 962.98 1145.43 1045.22 1066.23 1045.22 665.98 1441.54 665.98 1520.72 587.86 64.65 587.86"/><polygon class="dk-2" points="542.6 785.86 462.63 705.89 359.8 705.89 490.06 836.15 401.09 925.12 465.94 989.97 544.84 911.08 544.84 1065.86 625.43 1146.46 625.43 706.56 542.6 706.56 542.6 785.86"/><path class="dk-2" d="M838.65,1067.11c0,25.73-20.86,46.6-46.6,46.6h0c-25.73,0-46.6-20.86-46.6-46.6v-360.89h-83.33v479.93l129.93,129.93,129.93-129.93v-479.93h-83.33v360.89Z"/><polygon class="dk-2" points="1086.54 789.55 1171.33 789.55 1086.54 874.34 1086.54 957.67 1156.03 957.67 1235.23 874.34 1155.82 874.34 1324.15 789.55 1403.34 706.22 1086.54 706.22 1086.54 789.55"/></svg>
+    <div class="brand">ORDER <span>DESK</span></div>
+  </div>
+
+  <div id="intro">
+    <h1>Place an order</h1>
+    <p class="lead">Order shop supplies and T-shirts, send a reimbursement, or report something that needs fixing. No login needed.</p>
+  </div>
+
+  <div class="end" id="loading">
+    <p class="lead" id="loadText">Loading the order desk...</p>
+    <button type="button" class="ghost" id="retry" hidden>Try again</button>
+  </div>
+
+  <form id="f" novalidate hidden>
+    <fieldset>
+      <legend>Who's ordering</legend>
+      <div class="field">
+        <label class="lbl" for="shop">Your shop</label>
+        <select id="shop"><option value="">Choose your shop</option></select>
+      </div>
+      <div class="field">
+        <label class="lbl" for="name">Your name</label>
+        <select id="name" disabled><option value="">Pick your shop first</option></select>
+      </div>
+      <div class="field" id="newNameBox" hidden>
+        <label class="lbl" for="newName">Type your name</label>
+        <input type="text" id="newName" autocomplete="name" autocapitalize="words" maxlength="60" placeholder="First and last name">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>What do you need?</legend>
+      <div class="seg two" role="radiogroup" aria-label="What are you ordering?" id="typeSeg">
+        <label><input type="radio" name="type" value="supplies">Supplies</label>
+        <label><input type="radio" name="type" value="shirts">T-shirts</label>
+        <label><input type="radio" name="type" value="reimb">Reimbursement</label>
+        <label><input type="radio" name="type" value="work">Work order</label>
+      </div>
+    </fieldset>
+
+    <fieldset id="sec-supplies" hidden>
+      <legend>Supplies</legend>
+      <p class="hint">Check what your shop needs. All orders go out on the next supply run.</p>
+      <div class="picks" id="supplyList"></div>
+      <div class="field">
+        <label class="lbl" for="supplyOther">Anything not on the list? <span class="opt">optional</span></label>
+        <textarea id="supplyOther" maxlength="1000" placeholder="Add any recommendations or other items your shop needs."></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset id="sec-shirts" hidden>
+      <legend>DMND Kutz T-shirts</legend>
+      <p class="hint">$10 each. Up to 5 per size.</p>
+      <div class="sizes" id="sizes"></div>
+      <div class="total"><span>Total</span><span id="teeTotal">$0</span></div>
+      <div class="alert"><b>Polos: not in stock yet</b><span>Polos are on order. You can order them here once they come in.</span></div>
+      <div class="field">
+        <span class="lbl" id="payLbl">How will you pay?</span>
+        <div class="seg" role="radiogroup" aria-labelledby="payLbl">
+          <label><input type="radio" name="pay" value="Pay with cash">Pay with cash</label>
+          <label><input type="radio" name="pay" value="Take out of next check">Take out of next check</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset id="sec-reimb" hidden>
+      <legend>Reimbursement</legend>
+      <p class="hint">For shop supplies you paid for yourself. Not for T-shirts or polos.</p>
+      <div class="row">
+        <div class="field">
+          <label class="lbl" for="amount">Amount you spent</label>
+          <div class="money"><span>$</span><input type="text" id="amount" inputmode="decimal" maxlength="9" placeholder="0.00" autocomplete="off"></div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="date">Date you bought it</label>
+          <input type="date" id="date">
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="bought">What did you buy?</label>
+        <textarea id="bought" maxlength="1000" placeholder="List the items"></textarea>
+      </div>
+      <div class="field">
+        <label class="lbl" for="where">Where did you buy it? <span class="opt">optional</span></label>
+        <input type="text" id="where" maxlength="200" placeholder="Store name">
+      </div>
+      <div class="field">
+        <span class="lbl">Photo of your receipt</span>
+        <label class="photo" id="photoBtn"><input type="file" id="photo" accept="image/*"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/></svg><span>Take or pick a photo</span></label>
+        <div class="thumb" id="thumb" hidden><img id="thumbImg" alt="Your receipt photo"><div><div id="thumbTxt">Receipt photo added</div><button type="button" class="link" id="photoClear">Remove photo</button></div></div>
+        <p class="hint">No photo handy? Send it anyway and text the receipt to your manager.</p>
+      </div>
+    </fieldset>
+
+    <fieldset id="sec-work" hidden>
+      <legend>Work order</legend>
+      <p class="hint">Check everything that needs fixing. We'll look at it and schedule the repair.</p>
+      <div class="picks" id="fixList"></div>
+      <div class="field">
+        <label class="lbl" for="fixOther">Something else <span class="opt">optional</span></label>
+        <input type="text" id="fixOther" maxlength="200" placeholder="What else is broken?">
+      </div>
+      <div class="field">
+        <label class="lbl" for="fixDetails">Describe the problem <span class="opt">optional</span></label>
+        <textarea id="fixDetails" maxlength="1500" placeholder="Which station, what happened, anything we should know"></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset id="sec-notes" hidden>
+      <legend>Anything else?</legend>
+      <div class="field">
+        <label class="lbl" for="notes">Notes for the manager <span class="opt">optional</span></label>
+        <textarea id="notes" maxlength="1500"></textarea>
+      </div>
+    </fieldset>
+
+    <div class="end">
+      <div class="msg" id="msg" role="alert"></div>
+      <button type="submit" class="go" id="next">Review order</button>
+      <p class="foot">Only DMND KUTZ management sees your order.</p>
+    </div>
+  </form>
+
+  <div class="review" id="review" hidden>
+    <div>
+      <h1>Review your order</h1>
+      <p class="lead">Make sure everything is right before you send it.</p>
+    </div>
+    <dl class="sum" id="sum"></dl>
+    <div class="end">
+      <div class="msg" id="msg2" role="alert"></div>
+      <button type="button" class="go" id="send">Confirm order</button>
+      <button type="button" class="ghost" id="back">Back to fix something</button>
+    </div>
+  </div>
+
+  <div class="done" id="done" hidden>
+    <div class="check"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7" stroke="#0B0B0C" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h1 id="doneTitle">Order sent</h1>
+    <p class="lead" id="doneText"></p>
+    <button type="button" class="ghost" id="again">Send another</button>
+  </div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxi3SjXRS3MJcCVp4bL-53VYOBBX3U8osfSGqcWgc4N32ND_uZRIJltkJJlns0jd3lFVA/exec';
+function post(body) {
+  return fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(r => r.json());
+}
+function app(CFG) {
+const NOT_LISTED = 'My name is not listed';
+const TYPE_NAMES = { supplies: 'Supplies', shirts: 'T-shirts', reimb: 'Reimbursement', work: 'Work order' };
+const PRICE = 10;
+const $ = (id) => document.getElementById(id);
+const tick = '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const store = {
+  get(k) { try { return localStorage.getItem('od_' + k) || ''; } catch (e) { return ''; } },
+  set(k, v) { try { localStorage.setItem('od_' + k, v); } catch (e) {} }
+};
+const tees = {};
+let photo = null;
+
+CFG.shops.forEach(s => $('shop').appendChild(new Option(s.name, s.name)));
+
+function fillNames() {
+  const shop = CFG.shops.find(s => s.name === $('shop').value);
+  const sel = $('name');
+  sel.innerHTML = '';
+  if (!shop) { sel.appendChild(new Option('Pick your shop first', '')); sel.disabled = true; $('newNameBox').hidden = true; return; }
+  sel.appendChild(new Option('Choose your name', ''));
+  shop.barbers.forEach(n => sel.appendChild(new Option(n, n)));
+  sel.appendChild(new Option(NOT_LISTED, NOT_LISTED));
+  sel.disabled = false;
+  syncName();
+}
+function syncName() { $('newNameBox').hidden = $('name').value !== NOT_LISTED; }
+$('shop').addEventListener('change', fillNames);
+$('name').addEventListener('change', syncName);
+
+function picks(boxId, name, list) {
+  list.forEach(v => {
+    const l = document.createElement('label'); l.className = 'pick';
+    const i = document.createElement('input'); i.type = 'checkbox'; i.name = name; i.value = v;
+    const b = document.createElement('span'); b.className = 'box'; b.innerHTML = tick;
+    const t = document.createElement('span'); t.textContent = v;
+    l.append(i, b, t); $(boxId).appendChild(l);
+  });
+}
+picks('supplyList', 'supply', CFG.supplies);
+picks('fixList', 'fix', CFG.fixes);
+
+CFG.tees.forEach(t => {
+  tees[t.size] = 0;
+  const max = Math.min(5, t.left);
+  const row = document.createElement('div'); row.className = 'size' + (max ? '' : ' out');
+  row.innerHTML = '<span class="s"></span><span class="left"></span><span class="step"><button type="button" data-d="-1" aria-label="One less">−</button><output>0</output><button type="button" data-d="1" aria-label="One more">+</button></span>';
+  row.querySelector('.s').textContent = t.size;
+  row.querySelector('.left').textContent = max ? (t.left <= 2 ? 'Only ' + t.left + ' left' : 'In stock') : 'Out of stock';
+  const out = row.querySelector('output');
+  const [minus, plus] = row.querySelectorAll('button');
+  const draw = () => { out.textContent = tees[t.size]; minus.disabled = tees[t.size] <= 0; plus.disabled = tees[t.size] >= max; };
+  row.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    tees[t.size] = Math.max(0, Math.min(max, tees[t.size] + Number(b.dataset.d)));
+    draw(); drawTotal();
+  }));
+  draw();
+  $('sizes').appendChild(row);
+});
+function teeCount() { return Object.values(tees).reduce((a, n) => a + n, 0); }
+function drawTotal() { $('teeTotal').textContent = '$' + teeCount() * PRICE + (teeCount() ? ' for ' + teeCount() + (teeCount() > 1 ? ' shirts' : ' shirt') : ''); }
+
+function typeVal() { const t = document.querySelector('input[name=type]:checked'); return t ? t.value : ''; }
+document.querySelectorAll('input[name=type]').forEach(r => r.addEventListener('change', () => {
+  ['supplies', 'shirts', 'reimb', 'work'].forEach(k => { $('sec-' + k).hidden = typeVal() !== k; });
+  $('sec-notes').hidden = false;
+  $('msg').textContent = '';
+}));
+
+function today() { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+$('date').value = today(); $('date').max = today();
+$('amount').addEventListener('input', () => {
+  let v = $('amount').value.replace(/[^\d.]/g, '');
+  const i = v.indexOf('.'); if (i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, '').slice(0, 2);
+  $('amount').value = v;
+});
+
+$('photo').addEventListener('change', () => {
+  const file = $('photo').files[0];
+  if (!file) return;
+  $('photoBtn').querySelector('span').textContent = 'Getting photo ready…';
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    const scale = Math.min(1, 1600 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    const data = c.toDataURL('image/jpeg', 0.82);
+    URL.revokeObjectURL(url);
+    photo = { data: data, type: 'image/jpeg' };
+    $('thumbImg').src = data; $('thumb').hidden = false; $('photoBtn').hidden = true;
+    $('photoBtn').querySelector('span').textContent = 'Take or pick a photo';
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    $('photoBtn').querySelector('span').textContent = 'Take or pick a photo';
+    $('msg').textContent = "That photo didn't load. Try another, or text it to your manager.";
+  };
+  img.src = url;
+});
+$('photoClear').addEventListener('click', () => { photo = null; $('photo').value = ''; $('thumb').hidden = true; $('photoBtn').hidden = false; });
+
+function checked(name) { return [...document.querySelectorAll('input[name=' + name + ']:checked')].map(c => c.value); }
+function collect() {
+  const payEl = document.querySelector('input[name=pay]:checked');
+  return {
+    shop: $('shop').value, name: $('name').value, newName: $('newName').value.trim(), type: typeVal(),
+    supplies: checked('supply'), supplyOther: $('supplyOther').value.trim(),
+    tees: Object.assign({}, tees), pay: payEl ? payEl.value : '',
+    amount: $('amount').value, date: $('date').value, bought: $('bought').value.trim(), where: $('where').value.trim(), photo: photo,
+    fixes: checked('fix'), fixOther: $('fixOther').value.trim(), fixDetails: $('fixDetails').value.trim(),
+    notes: $('notes').value.trim()
+  };
+}
+function problem(p) {
+  const t = p.type;
+  const checks = [
+    [!p.shop, 'Pick your shop.', 'shop'],
+    [!p.name, 'Pick your name.', 'name'],
+    [p.name === NOT_LISTED && !p.newName, 'Type your name.', 'newName'],
+    [!t, 'Pick what you need: supplies, T-shirts, a reimbursement, or a work order.', 'typeSeg'],
+    [t === 'supplies' && !p.supplies.length && !p.supplyOther, 'Check at least one supply, or write what you need.', 'supplyList'],
+    [t === 'shirts' && !teeCount(), 'Add at least one T-shirt.', 'sizes'],
+    [t === 'shirts' && !p.pay, 'Pick how you will pay.', 'payLbl'],
+    [t === 'reimb' && !(Number(p.amount) > 0), 'Enter how much you spent.', 'amount'],
+    [t === 'reimb' && !p.date, 'Pick the date you bought it.', 'date'],
+    [t === 'reimb' && !p.bought, 'Write what you bought.', 'bought'],
+    [t === 'work' && !p.fixes.length && !p.fixOther, 'Check what needs fixing.', 'fixList']
+  ];
+  return checks.find(c => c[0]);
+}
+function line(dt, dd) {
+  const row = document.createElement('div');
+  const a = document.createElement('dt'); a.textContent = dt;
+  const b = document.createElement('dd');
+  if (Array.isArray(dd)) { const ul = document.createElement('ul'); dd.forEach(x => { const li = document.createElement('li'); li.textContent = x; ul.appendChild(li); }); b.appendChild(ul); }
+  else b.textContent = dd;
+  row.append(a, b); $('sum').appendChild(row);
+}
+function money(n) { return '$' + Number(n).toFixed(2); }
+function showReview(p) {
+  $('sum').innerHTML = '';
+  line('Shop', p.shop);
+  line('Name', p.name === NOT_LISTED ? p.newName : p.name);
+  line('Order', TYPE_NAMES[p.type]);
+  if (p.type === 'supplies') {
+    if (p.supplies.length) line('Supplies', p.supplies.map(s => '1 ' + s));
+    if (p.supplyOther) line('Not on list', p.supplyOther);
+  } else if (p.type === 'shirts') {
+    line('T-shirts', Object.keys(p.tees).filter(s => p.tees[s]).map(s => p.tees[s] + ' × ' + s));
+    line('Total', '$' + teeCount() * PRICE);
+    line('Payment', p.pay);
+  } else if (p.type === 'reimb') {
+    line('Amount', money(p.amount));
+    line('Bought', p.bought);
+    if (p.where) line('Where', p.where);
+    line('Date', new Date(p.date + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
+    line('Receipt', p.photo ? 'Photo added' : 'No photo. Text it to your manager.');
+  } else {
+    line('Fix', p.fixOther ? p.fixes.concat(p.fixOther) : p.fixes);
+    if (p.fixDetails) line('Details', p.fixDetails);
+  }
+  if (p.notes) line('Notes', p.notes);
+  $('msg2').textContent = '';
+  $('f').hidden = true; $('intro').hidden = true; $('review').hidden = false; $('done').hidden = true;
+  window.scrollTo(0, 0);
+}
+
+let pending = null;
+$('f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const p = collect();
+  const miss = problem(p);
+  if (miss) {
+    $('msg').textContent = miss[1];
+    const el = $(miss[2]); el.scrollIntoView({ block: 'center' }); if (el.focus) el.focus({ preventScroll: true });
+    return;
+  }
+  $('msg').textContent = '';
+  pending = p;
+  showReview(p);
+});
+$('back').addEventListener('click', () => { $('review').hidden = true; $('f').hidden = false; $('intro').hidden = false; window.scrollTo(0, 0); });
+
+const DONE = {
+  supplies: () => 'Your supply order is in. It goes out on the next supply run.',
+  shirts: (p) => 'Your T-shirt order is in. Total $' + teeCount() * PRICE + ', ' + (p.pay === 'Pay with cash' ? 'paid in cash.' : 'taken out of your next check.'),
+  reimb: (p, r) => 'Your reimbursement for ' + money(p.amount) + ' is in. ' + (r && r.photo ? 'We got your receipt photo.' : 'Text a photo of your receipt to your manager.'),
+  work: () => 'Your work order is in. We’ll take a look and schedule the repair.'
+};
+$('send').addEventListener('click', () => {
+  const p = pending;
+  if (!p) return;
+  $('send').disabled = true; $('send').textContent = 'Sending…'; $('back').disabled = true;
+  post(Object.assign({ action: 'submit' }, p))
+    .then((r) => {
+      if (!r || !r.ok) throw new Error((r && r.error) || '');
+      store.set('shop', p.shop); store.set('name', p.name); store.set('newName', p.newName);
+      $('doneTitle').textContent = 'Thanks, ' + String((r && r.name) || p.newName || p.name).split(' ')[0];
+      $('doneText').textContent = DONE[p.type](p, r);
+      $('review').hidden = true; $('done').hidden = false;
+      $('send').disabled = false; $('send').textContent = 'Confirm order'; $('back').disabled = false;
+      window.scrollTo(0, 0);
+    })
+    .catch((err) => {
+      $('msg2').textContent = (err && err.message) || "That didn't send. Check your signal and try again.";
+      $('send').disabled = false; $('send').textContent = 'Confirm order'; $('back').disabled = false;
+    });
+});
+$('again').addEventListener('click', () => {
+  const keep = { shop: $('shop').value, name: $('name').value, newName: $('newName').value };
+  $('f').reset();
+  $('shop').value = keep.shop; fillNames(); $('name').value = keep.name; $('newName').value = keep.newName; syncName();
+  Object.keys(tees).forEach(s => { tees[s] = 0; });
+  document.querySelectorAll('.size output').forEach(o => { o.textContent = '0'; });
+  document.querySelectorAll('.step button[data-d="-1"]').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('.size:not(.out) .step button[data-d="1"]').forEach(b => { b.disabled = false; });
+  drawTotal();
+  $('photoClear').click();
+  $('date').value = today();
+  ['supplies', 'shirts', 'reimb', 'work', 'notes'].forEach(k => { $('sec-' + k).hidden = true; });
+  pending = null;
+  $('done').hidden = true; $('f').hidden = false; $('intro').hidden = false;
+  window.scrollTo(0, 0);
+});
+
+(function restore() {
+  const shop = store.get('shop');
+  if (!CFG.shops.some(s => s.name === shop)) return;
+  $('shop').value = shop; fillNames();
+  const name = store.get('name');
+  if ([...$('name').options].some(o => o.value === name)) { $('name').value = name; syncName(); }
+  if (name === NOT_LISTED) $('newName').value = store.get('newName');
+})();
+}
+
+const $ = (id) => document.getElementById(id);
+function load() {
+  $('loadText').textContent = 'Loading the order desk...'; $('retry').hidden = true;
+  post({ action: 'config' })
+    .then((res) => {
+      if (!res || !res.ok || !res.config) throw new Error();
+      $('loading').hidden = true; $('f').hidden = false;
+      app(res.config);
+    })
+    .catch(() => {
+      $('loadText').textContent = "The order desk didn't load. Check your signal and try again.";
+      $('retry').hidden = false;
+    });
+}
+$('retry').addEventListener('click', load);
+load();
+</script>
+</body>
+</html>
